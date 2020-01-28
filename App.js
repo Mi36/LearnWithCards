@@ -17,37 +17,88 @@ const {
   event,
 } = Animated;
 
+function runSpring(clock, value, velocity, dest) {
+  const state = {
+    finished: new Value(0),
+    velocity: new Value(0),
+    position: new Value(0),
+    time: new Value(0),
+  };
+
+  const config = {
+    damping: 7,
+    mass: 1,
+    stiffness: 121.6,
+    overshootClamping: false,
+    restSpeedThreshold: 0.001,
+    restDisplacementThreshold: 0.001,
+    toValue: new Value(0),
+  };
+
+  return [
+    cond(clockRunning(clock), 0, [
+      set(state.finished, 0),
+      set(state.velocity, velocity),
+      set(state.position, value),
+      set(config.toValue, dest),
+      startClock(clock),
+    ]),
+    spring(clock, state, config),
+    cond(state.finished, stopClock(clock)),
+    state.position,
+  ];
+}
+
 class App extends Component {
   constructor() {
     super();
     this.state = {};
     this.translateX = new Value(0);
     const dragX = new Value(0);
-    const state = new Value(-1); // -1 means state in undetermined
+    const state = new Value(-1);
+    const dragVX = new Value(0);
+    // -1 means state in un determined
     // since we imported from Animated above we can use directly
 
     this.onGestureEvent = Animated.event([
       {
         nativeEvent: {
-          // importent pont here here is translation X
+          // importent pont here here is translationX
           translationX: dragX,
-          state: state,
+          velocityX: dragVX,
+
+          // not above carefully
+          state: state, // it will say what is the current state
         },
       },
     ]);
+
+    const clock = new Clock();
     const transX = new Value();
     this.translateX = cond(
-      eq(state, State.ACTIVE),
+      eq(state, State.ACTIVE), // active state aano ennu parishodikkum
       [
+        stopClock(clock),
         set(transX, dragX), // set the value of dragX to other
         transX, // return this value then
         //if state active this block will run
         //when state is active we want to calculate new panValue
       ],
       [
-        set(transX, 0),
-        transX,
+        //no active then this
+        // set(transX, 0),
+        //  transX,
         //if inactive this block will run
+        // here set transX, check for a condition, if transX is defined or not
+        //if yes run the function, otherwise return 0
+        // in runSpring function ist argument is clock
+        // 2nd is transx
+        //3rd is velocity, this we will define on onGestureEvent
+        // 4th is the destination point
+        set(
+          transX,
+          cond(defined(transX), runSpring(clock, transX, dragVX, 0), 0),
+        ),
       ],
     );
     //above
