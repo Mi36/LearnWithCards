@@ -18,6 +18,14 @@ class MakeStack extends Component {
     onSwipeRight: () => {},
     onSwipeLeft: () => {},
   };
+
+  //this compares incoming props and new props and made changes if required
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState({index: 0});
+    }
+  }
+
   componentDidUpdate() {
     if (Platform.OS === 'android') {
       if (UIManager.setLayoutAnimationEnabledExperimental) {

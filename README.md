@@ -17,3 +17,7 @@ it is because changing of normal view to animated view
 to solve this make every vie as animated view
 the two things are same
 difference is the animated view contains additional prop
+
+# componentWillReceiveProps
+
+if new data comes it checks and appropriate action can be done
