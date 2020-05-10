@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 //import Ball from './src/ball';
-import Deck from './src/deck';
+//import Deck from './src/deck';
+//import AnimateOnlyOne from './src/AnimateOnlyOne';
+import BringNextCard from './src/BringNextCard';
+//import RotateCard from './src/RotateCard';
 import {Button, Card} from 'react-native-elements';
 
 const DATA = [
@@ -56,11 +59,22 @@ class App extends Component {
       </Card>
     );
   }
+
+  renderNoMoreCards() {
+    return (
+      <Card title="No more Item">
+        <Text>No more data</Text>
+      </Card>
+    );
+  }
   render() {
     return (
       <View style={styles.main}>
-        <Deck data={DATA} renderCard={this.renderCard} />
-        <Button title="Hey!" />
+        <BringNextCard
+          data={DATA}
+          renderCard={this.renderCard}
+          renderNoMoreCards={this.renderNoMoreCards}
+        />
       </View>
     );
   }
