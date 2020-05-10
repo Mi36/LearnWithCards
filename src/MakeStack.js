@@ -107,7 +107,10 @@ class MakeStack extends Component {
           );
         }
         return (
-          <Animated.View key={item.id} style={styles.cardStyle}>
+          <Animated.View
+            key={item.id}
+            // card placed one below another with little difference
+            style={[styles.cardStyle, {top: 10 * (i - this.state.index)}]}>
             {this.props.renderCard(item)}
           </Animated.View>
         );
@@ -129,6 +132,6 @@ const styles = StyleSheet.create({
   },
 });
 // if we are not putting width here it card size reduced, and takes only width that contain text
-//we can also put right:0 and left:0 but it may lead to conflict later
+//we can also put right:0 and left:0 but it may lead to conflict later in this example
 
 export default MakeStack;
