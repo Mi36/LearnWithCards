@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {View, Text, Animated, StyleSheet, PanResponder} from 'react-native';
+import {
+  View,
+  Text,
+  Animated,
+  StyleSheet,
+  PanResponder,
+  Dimensions,
+} from 'react-native';
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 class RotateCard extends Component {
   constructor(props) {
@@ -20,11 +28,18 @@ class RotateCard extends Component {
   }
 
   getCardStyle = () => {
+    const {position} = this.state;
+    //this contains position at any instance
+    const rotate = position.x.interpolate({
+      inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
+      outputRange: ['-120deg', '0deg', '120deg'],
+    });
+
     //here we return as one object
     //then it pass to style property
     return {
-      ...this.state.position.getLayout(),
-      transform: [{rotate: '-45deg'}],
+      ...position.getLayout(),
+      transform: [{rotate: rotate}],
     };
   };
 
