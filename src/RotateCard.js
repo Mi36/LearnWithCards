@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
 
 class RotateCard extends Component {
   constructor(props) {
@@ -23,7 +24,13 @@ class RotateCard extends Component {
         });
       },
       onPanResponderRelease: (e, gestureState) => {
-        this.resetPosition();
+        if (gestureState.dx > SWIPE_THRESHOLD) {
+          console.log('swipe rigth');
+        } else if (gestureState.dx < -SWIPE_THRESHOLD) {
+          console.log('left');
+        } else {
+          this.resetPosition();
+        }
       },
     });
     this.state = {panResponder, position}; // using this we can refrence from inside render and component
