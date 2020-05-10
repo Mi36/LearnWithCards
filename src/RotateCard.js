@@ -22,10 +22,18 @@ class RotateCard extends Component {
           y: gestureState.dy,
         });
       },
-      onPanResponderRelease: (e, gestureState) => {},
+      onPanResponderRelease: (e, gestureState) => {
+        this.resetPosition();
+      },
     });
     this.state = {panResponder, position}; // using this we can refrence from inside render and component
   }
+
+  resetPosition = () => {
+    Animated.spring(this.state.position, {
+      toValue: {x: 0, y: 0},
+    }).start();
+  };
 
   getCardStyle = () => {
     const {position} = this.state;
