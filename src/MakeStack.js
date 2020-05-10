@@ -20,19 +20,17 @@ class MakeStack extends Component {
   };
 
   //this compares incoming props and new props and made changes if required
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.data !== this.props.data) {
-      this.setState({index: 0});
-    }
-  }
 
-  componentDidUpdate() {
+  componentDidUpdate(nextProps) {
     if (Platform.OS === 'android') {
       if (UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }
     LayoutAnimation.spring();
+    if (nextProps.data !== this.props.data) {
+      this.setState({index: 0});
+    }
   }
   constructor(props) {
     super(props);
@@ -108,31 +106,34 @@ class MakeStack extends Component {
       return this.props.renderNoMoreCards();
     }
 
-    return this.props.data
-      .map((item, i) => {
-        if (i < this.state.index) {
-          return null;
-        }
-        if (i === this.state.index) {
-          return (
-            <Animated.View
-              key={item.id}
-              style={[this.getCardStyle(), styles.cardStyle]}
-              {...this.state.panResponder.panHandlers}>
-              {this.props.renderCard(item)}
-            </Animated.View>
-          );
-        }
+    const deck = this.props.data.map((item, i) => {
+      if (i < this.state.index) {
+        return null;
+      }
+      if (i === this.state.index) {
         return (
           <Animated.View
             key={item.id}
-            // card placed one below another with little difference
-            style={[styles.cardStyle, {top: 10 * (i - this.state.index)}]}>
+            style={[this.getCardStyle(), styles.cardStyle]}
+            {...this.state.panResponder.panHandlers}>
             {this.props.renderCard(item)}
           </Animated.View>
         );
-      })
-      .reverse();
+      }
+      return (
+        <Animated.View
+          key={item.id}
+          // card placed one below another with little difference
+          style={[
+            styles.cardStyle,
+            {top: 10 * (i - this.state.index)},
+            {zIndex: -i},
+          ]}>
+          {this.props.renderCard(item)}
+        </Animated.View>
+      );
+    });
+    return Platform.OS === 'android' ? deck : deck.reverse();
   };
 
   render() {

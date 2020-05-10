@@ -4,6 +4,7 @@ import {View, StyleSheet, Text} from 'react-native';
 //import Deck from './src/deck';
 //import AnimateOnlyOne from './src/AnimateOnlyOne';
 import BringNextCard from './src/BringNextCard';
+import MakeStack from './src/MakeStack';
 //import RotateCard from './src/RotateCard';
 import {Button, Card} from 'react-native-elements';
 
@@ -70,7 +71,7 @@ class App extends Component {
   render() {
     return (
       <View style={styles.main}>
-        <BringNextCard
+        <MakeStack
           data={DATA}
           renderCard={this.renderCard}
           renderNoMoreCards={this.renderNoMoreCards}
