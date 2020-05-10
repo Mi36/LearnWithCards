@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
+const SWIPE_OUT_DURATION = 250; //in milli seconds
 
 class RotateCard extends Component {
   constructor(props) {
@@ -26,14 +27,37 @@ class RotateCard extends Component {
       onPanResponderRelease: (e, gestureState) => {
         if (gestureState.dx > SWIPE_THRESHOLD) {
           console.log('swipe rigth');
+          this.forceSwipeRight();
         } else if (gestureState.dx < -SWIPE_THRESHOLD) {
           console.log('left');
+          this.forceSwipeLeft();
         } else {
           this.resetPosition();
         }
       },
     });
     this.state = {panResponder, position}; // using this we can refrence from inside render and component
+  }
+
+  forceSwipeLeft() {
+    Animated.timing(this.state.position, {
+      toValue: {
+        x: -SCREEN_WIDTH,
+        y: 0,
+      },
+      duration: SWIPE_OUT_DURATION,
+    }).start();
+  }
+
+  forceSwipeRight() {
+    //here first argument is the current position and it is continuosly changing while we dragging
+    Animated.timing(this.state.position, {
+      toValue: {
+        x: SCREEN_WIDTH,
+        y: 0,
+      },
+      duration: SWIPE_OUT_DURATION,
+    }).start();
   }
 
   resetPosition = () => {
