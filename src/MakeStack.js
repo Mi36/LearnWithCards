@@ -6,6 +6,8 @@ import {
   StyleSheet,
   PanResponder,
   Dimensions,
+  UIManager,
+  LayoutAnimation,
 } from 'react-native';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
@@ -16,7 +18,14 @@ class MakeStack extends Component {
     onSwipeRight: () => {},
     onSwipeLeft: () => {},
   };
-
+  componentDidUpdate() {
+    if (Platform.OS === 'android') {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    }
+    LayoutAnimation.spring();
+  }
   constructor(props) {
     super(props);
     const position = new Animated.ValueXY();
