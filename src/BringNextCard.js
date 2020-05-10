@@ -87,6 +87,10 @@ class BringNextCard extends Component {
   };
 
   renderCards = () => {
+    if (this.state.index >= this.props.data.length) {
+      return this.props.renderNoMoreCards();
+    }
+
     return this.props.data.map((item, i) => {
       if (i < this.state.index) {
         return null;
