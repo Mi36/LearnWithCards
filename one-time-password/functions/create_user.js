@@ -11,7 +11,7 @@ module.exports = function(req, res) {
   // any way we use as string
   //we must avoid all other charecters from number
   //repalce() only work for string
-  const phone = String(req.body.phone).replace(/[^\d]/g, '');
+  const phone = String(req.body.phone).replace(/[^\d+]/g, '');
 
   //create a new user using that account
   //here we use phone number as id of user
@@ -20,7 +20,7 @@ module.exports = function(req, res) {
   // below code is asynchronous request. it takes some time
   //we have to handle this
   //below function returns a promise
-  admin
+  return admin
     .auth()
     .createUser({uid: phone})
     .then(user => res.send(user))
