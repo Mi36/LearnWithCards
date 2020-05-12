@@ -45,6 +45,8 @@ build/Release
 
 # Dependency directories
 node_modules/
+service_account.json
+twilio.js
 
 # Optional npm cache directory
 .npm
