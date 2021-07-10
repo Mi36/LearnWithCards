@@ -1,132 +1,81 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
+import {View, StyleSheet, Text} from 'react-native';
+//import Ball from './src/ball';
+//import Deck from './src/deck';
+//import AnimateOnlyOne from './src/AnimateOnlyOne';
+import BringNextCard from './src/BringNextCard';
+import MakeStack from './src/MakeStack';
+//import RotateCard from './src/RotateCard';
+import {Button, Card} from 'react-native-elements';
 
-const {
-  set,
-  cond,
-  eq,
-  spring,
-  startClock,
-  stopClock,
-  clockRunning,
-  defined,
-  Value,
-  Clock,
-  event,
-} = Animated;
-
-function runSpring(clock, value, velocity, dest) {
-  const state = {
-    finished: new Value(0),
-    velocity: new Value(0),
-    position: new Value(0),
-    time: new Value(0),
-  };
-
-  const config = {
-    damping: 7,
-    mass: 1,
-    stiffness: 121.6,
-    overshootClamping: false,
-    restSpeedThreshold: 0.001,
-    restDisplacementThreshold: 0.001,
-    toValue: new Value(0),
-  };
-
-  return [
-    cond(clockRunning(clock), 0, [
-      set(state.finished, 0),
-      set(state.velocity, velocity),
-      set(state.position, value),
-      set(config.toValue, dest),
-      startClock(clock),
-    ]),
-    spring(clock, state, config),
-    cond(state.finished, stopClock(clock)),
-    state.position,
-  ];
-}
+const DATA = [
+  {
+    id: 1,
+    text: 'Card #1',
+    uri: 'http://www.fluxdigital.co/wp-content/uploads/2015/04/Unsplash.jpg',
+  },
+  {
+    id: 2,
+    text: 'Card #2',
+    uri: 'http://www.fluxdigital.co/wp-content/uploads/2015/04/Unsplash.jpg',
+  },
+  {
+    id: 3,
+    text: 'Card #3',
+    uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-09.jpg',
+  },
+  {
+    id: 4,
+    text: 'Card #4',
+    uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-01.jpg',
+  },
+  {
+    id: 5,
+    text: 'Card #5',
+    uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-04.jpg',
+  },
+  {
+    id: 6,
+    text: 'Card #6',
+    uri: 'http://www.fluxdigital.co/wp-content/uploads/2015/04/Unsplash.jpg',
+  },
+  {
+    id: 7,
+    text: 'Card #7',
+    uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-09.jpg',
+  },
+  {
+    id: 8,
+    text: 'Card #8',
+    uri: 'http://imgs.abduzeedo.com/files/paul0v2/unsplash/unsplash-01.jpg',
+  },
+];
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {};
-    this.translateX = new Value(0);
-    const dragX = new Value(0);
-    const state = new Value(-1);
-    const dragVX = new Value(0);
-    // -1 means state in un determined
-    // since we imported from Animated above we can use directly
-
-    this.onGestureEvent = Animated.event([
-      {
-        nativeEvent: {
-          // importent pont here here is translationX
-          translationX: dragX,
-          velocityX: dragVX,
-
-          // not above carefully
-          state: state, // it will say what is the current state
-        },
-      },
-    ]);
-
-    const clock = new Clock();
-    const transX = new Value();
-    this.translateX = cond(
-      eq(state, State.ACTIVE), // active state aano ennu parishodikkum
-      [
-        stopClock(clock),
-        set(transX, dragX), // set the value of dragX to other
-        transX, // return this value then
-        //if state active this block will run
-        //when state is active we want to calculate new panValue
-      ],
-      [
-        //no active then this
-        // set(transX, 0),
-        //  transX,
-        //if inactive this block will run
-        // here set transX, check for a condition, if transX is defined or not
-        //if yes run the function, otherwise return 0
-        // in runSpring function ist argument is clock
-        // 2nd is transx
-        //3rd is velocity, this we will define on onGestureEvent
-        // 4th is the destination point
-        set(
-          transX,
-          cond(defined(transX), runSpring(clock, transX, dragVX, 0), 0),
-        ),
-      ],
+  renderCard(item) {
+    return (
+      <Card title={item.text} image={{uri: item.uri}} key={item.id}>
+        <Text>I can customise this</Text>
+        <Button title="View Now" backgroundColor="#03A9F4" />
+      </Card>
     );
-    //above
-    //i- condition
-    //ii-if true this will run
-    //iii-otherwise 3 will run
-    //condition we want to check is this state is active
   }
 
-  //when the circle is dragged the curren state become active
-  //once box released the oldstate become active
-  //current state becomes end
-
+  renderNoMoreCards() {
+    return (
+      <Card title="No more Item">
+        <Text>No more data</Text>
+      </Card>
+    );
+  }
   render() {
     return (
       <View style={styles.main}>
-        <PanGestureHandler
-          onGestureEvent={this.onGestureEvent}
-          onHandlerStateChange={this.onGestureEvent}>
-          <Animated.View
-            style={[
-              styles.box,
-              {
-                transform: [{translateX: this.translateX}],
-                // transform is used for styyling
-              },
-            ]}></Animated.View>
-        </PanGestureHandler>
+        <MakeStack
+          data={DATA}
+          renderCard={this.renderCard}
+          renderNoMoreCards={this.renderNoMoreCards}
+        />
       </View>
     );
   }
@@ -134,9 +83,7 @@ class App extends Component {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'grey',
   },
 
   box: {
